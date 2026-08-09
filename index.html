@@ -56,7 +56,7 @@
             min-height: 100vh;
         }
 
-        /* هدر شیشه‌ای مجهز به آیکون‌های بالایی */
+        /* هدر شیشه‌ای با دو آیکون مجزا در چپ و راست */
         .header {
             position: relative;
             text-align: center;
@@ -70,16 +70,9 @@
             box-shadow: var(--glass-shadow);
         }
         
-        .header-actions {
+        .header-btn {
             position: absolute;
             top: 18px;
-            left: 18px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .header-btn {
             background: rgba(255, 255, 255, 0.2);
             border: 1px solid var(--glass-border);
             width: 40px;
@@ -98,6 +91,16 @@
         .header-btn svg {
             width: 20px;
             height: 20px;
+        }
+
+        /* موقعیت آیکون پروفایل در سمت چپ */
+        .btn-profile {
+            left: 18px;
+        }
+
+        /* موقعیت آیکون ثبت خرید در سمت راست */
+        .btn-cart {
+            right: 18px;
         }
 
         .header img {
@@ -531,15 +534,15 @@
 <body>
 
     <div class="header">
-        <!-- آیکون‌های ثبت خرید و حساب کاربر در گوشه بالا سمت چپ -->
-        <div class="header-actions">
-            <button class="header-btn" onclick="openMyOrdersModal()" title="سفارش‌های من / پیگیری">
-                <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-            </button>
-            <button class="header-btn" onclick="openProfileModal()" title="حساب کاربری">
-                <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-            </button>
-        </div>
+        <!-- آیکون ثبت خرید در سمت راست -->
+        <button class="header-btn btn-cart" onclick="openMyOrdersModal()" title="سفارش‌های من / پیگیری">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+        </button>
+
+        <!-- آیکون حساب کاربری در سمت چپ -->
+        <button class="header-btn btn-profile" onclick="openProfileModal()" title="حساب کاربری">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        </button>
 
         <img src="https://s17.uupload.ir/files/logopng/logo.png" alt="هاریکا">
         <h2>فروشگاه پوشاک هاریکا</h2>
@@ -1003,7 +1006,7 @@
                             </div>
                             <div class="success-desc">
                                 اطلاعات سفارش با موفقیت ثبت گردید.<br>
-                                جهت مشاهده و پیگیری خریدهای خود می‌توانید در بالای صفحه روی آیکون سبد خرید کلیک کنید.
+                                جهت مشاهده و پیگیری خریدهای خود می‌توانید در بالای صفحه سمت راست روی آیکون سبد خرید کلیک کنید.
                             </div>
                             <!-- بسته شدن کامل مدال پس از ثبت -->
                             <button class="btn-submit" onclick="closeOrderModal()">متوجه شدم و بستن</button>
