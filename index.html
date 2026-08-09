@@ -56,8 +56,9 @@
             min-height: 100vh;
         }
 
-        /* هدر شیشه‌ای */
+        /* هدر شیشه‌ای مجهز به آیکون‌های بالایی */
         .header {
+            position: relative;
             text-align: center;
             margin-bottom: 25px;
             padding: 18px;
@@ -68,6 +69,37 @@
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow);
         }
+        
+        .header-actions {
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid var(--glass-border);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s ease;
+        }
+        .header-btn:active {
+            transform: scale(0.92);
+        }
+        .header-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
         .header img {
             width: 85px;
             height: 85px;
@@ -499,6 +531,16 @@
 <body>
 
     <div class="header">
+        <!-- آیکون‌های ثبت خرید و حساب کاربر در گوشه بالا سمت چپ -->
+        <div class="header-actions">
+            <button class="header-btn" onclick="openMyOrdersModal()" title="سفارش‌های من / پیگیری">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+            </button>
+            <button class="header-btn" onclick="openProfileModal()" title="حساب کاربری">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--text-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </button>
+        </div>
+
         <img src="https://s17.uupload.ir/files/logopng/logo.png" alt="هاریکا">
         <h2>فروشگاه پوشاک هاریکا</h2>
     </div>
@@ -540,7 +582,7 @@
     <!-- مدال اصلی ثبت سفارش / مدیریت خریدهای قبلی -->
     <div id="orderModal" class="modal">
         <div class="order-modal-box" id="orderModalBox">
-            <!-- محتوای داینامیک این مدال از طریق JavaScript بارگذاری می‌شود -->
+            <!-- محتوای داینامیک مدال -->
         </div>
     </div>
 
@@ -552,10 +594,6 @@
         <a href="https://wa.me/989144510449" target="_blank" class="dock-item" title="واتساپ">
             <svg viewBox="0 0 24 24" fill="none" stroke="#25d366" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
         </a>
-        <!-- آیکون ثبت خرید / پیگیری سفارش‌ها -->
-        <button class="dock-item" onclick="openMyOrdersModal()" title="سفارش‌های من">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-        </button>
         <a href="tel:04533250571" class="dock-item" title="تماس باما">
             <svg viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
         </a>
@@ -728,7 +766,30 @@
             });
         }
 
-        /* --- سیستم مدیریت حرفه‌ای سفارش‌ها --- */
+        /* --- سیستم مدیریت سفارش‌ها و حساب کاربری --- */
+        function openProfileModal() {
+            const user = tg?.initDataUnsafe?.user;
+            const name = user ? `${user.first_name || ''} ${user.last_name || ''}`.trim() : "کاربر مهمان";
+            const username = user?.username ? `@${user.username}` : "تنظیم نشده";
+
+            const modalBox = document.getElementById('orderModalBox');
+            modalBox.innerHTML = `
+                <div class="order-modal-header">
+                    <h3>پروفایل کاربری</h3>
+                    <button type="button" class="close-btn" onclick="closeOrderModal()">&times;</button>
+                </div>
+                <div style="text-align: center; padding: 15px 0;">
+                    <div style="width: 70px; height: 70px; background: var(--price-color); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px; margin: 0 auto 12px auto;">
+                        👤
+                    </div>
+                    <h4 style="margin: 0 0 5px 0;">${name}</h4>
+                    <span style="font-size: 12px; color: var(--text-muted);">${username}</span>
+                </div>
+                <button class="btn-submit" onclick="closeOrderModal()">متوجه شدم</button>
+            `;
+            document.getElementById('orderModal').style.display = 'flex';
+        }
+
         function openMyOrdersModal() {
             renderMyOrdersView();
             document.getElementById('orderModal').style.display = 'flex';
@@ -928,7 +989,7 @@
                 if (result.success) {
                     selectedProductForOrder.stock -= 1;
                     
-                    // ذخیره در حافظه محلی جهت مشاهده در تب ثبت‌شده‌ها
+                    // ذخیره در سیستم محلی
                     saveLocalOrder(orderData);
 
                     const modalBox = document.getElementById('orderModalBox');
@@ -941,10 +1002,11 @@
                                 <div class="tracking-code">${trackingCode}</div>
                             </div>
                             <div class="success-desc">
-                                اطلاعات سفارش شما با موفقیت در سیستم ثبت شد.<br>
-                                می‌توانید از داک پایین بخش «سفارش‌های من» وضعیت آن را پیگیری کنید.
+                                اطلاعات سفارش با موفقیت ثبت گردید.<br>
+                                جهت مشاهده و پیگیری خریدهای خود می‌توانید در بالای صفحه روی آیکون سبد خرید کلیک کنید.
                             </div>
-                            <button class="btn-submit" onclick="openMyOrdersModal()">مشاهده لیست سفارش‌ها</button>
+                            <!-- بسته شدن کامل مدال پس از ثبت -->
+                            <button class="btn-submit" onclick="closeOrderModal()">متوجه شدم و بستن</button>
                         </div>
                     `;
 
