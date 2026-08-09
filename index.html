@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دستیار هوشمند خرید لباس</title>
+    <!-- اتصال به اسکریپت رسمی مینی‌اپ تلگرام -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: Tahoma, sans-serif;
+            background-color: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .header { text-align: center; margin-bottom: 20px; }
+        .header img { width: 80px; height: 80px; border-radius: 50%; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--tg-theme-button-color, #0088cc);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        #results { margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <img src="logo.png" alt="Logo">
+        <h2>دستیار هوشمند استایل مردانه</h2>
+    </div>
+
+    <div class="form-group">
+        <label for="budget">حداکثر بودجه (دلار):</label>
+        <input type="number" id="budget" placeholder="مثلاً ۵۰">
+    </div>
+
+    <div class="form-group">
+        <label for="style">سبک لباس:</label>
+        <select id="style">
+            <option value="casual">روزمره و کژوال</option>
+            <option value="sport">اسپورت و ورزشی</option>
+            <option value="formal">رسمی و کت‌وشلوار</option>
+            <option value="streetwear">استریت‌ویر / لش</option>
+        </select>
+    </div>
+
+    <button onclick="findClothes()">پیشنهاد هوشمند ست لباس</button>
+
+    <div id="results"></div>
+
+    <script>
+        // مقداردهی اولیه به تلگرام
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // باز کردن به صورت تمام‌صفحه
+
+        function findClothes() {
+            const budget = document.getElementById('budget').value;
+            const style = document.getElementById('style').value;
+            const resultsDiv = document.getElementById('results');
+
+            if (!budget) {
+                alert('لطفاً بودجه خود را وارد کنید.');
+                return;
+            }
+
+            resultsDiv.innerHTML = "<p>در حال جستجو و تحلیل استایل با AI...</p>";
+
+            // در گام بعدی کلید API هوش مصنوعی به این بخش متصل می‌شود
+            setTimeout(() => {
+                resultsDiv.innerHTML = `
+                    <p><b>پیشنهاد AI برای بودجه $${budget}:</b></p>
+                    <p>یک تیشرت کژوال + شلوار جین با سبک ${style}</p>
+                `;
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
