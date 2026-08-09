@@ -68,7 +68,7 @@
 
     <div class="form-group">
         <label for="style">دسته / نوع لباس:</label>
-        <select id="style">
+        <select id="style" onchange="updateSizes()">
             <option value="تیشرت">تیشرت</option>
             <option value="پیراهن">پیراهن</option>
             <option value="شلوار لی">شلوار لی</option>
@@ -81,14 +81,7 @@
     <div class="form-group">
         <label for="size">سایز لباس:</label>
         <select id="size">
-            <option value="S">S</option>
-            <option value="M">M</option>
-            <option value="L">L</option>
-            <option value="XL" selected>XL</option>
-            <option value="2XL">2XL</option>
-            <option value="3XL">3XL</option>
-            <option value="4XL">4XL</option>
-            <option value="5XL">5XL</option>
+            <!-- گزینه‌ها به‌صورت پویا توسط اسکریپت مدیریت می‌شوند -->
         </select>
     </div>
 
@@ -100,6 +93,30 @@
         // مقداردهی اولیه تلگرام
         const tg = window.Telegram.WebApp;
         tg.expand();
+
+        // لیست سایزها
+        const alphaSizes = ["S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"];
+        const numericSizes = ["31", "32", "33", "34", "36", "38"];
+
+        // تغییر پویا گزینه‌های سایز بر اساس دسته لباس
+        function updateSizes() {
+            const category = document.getElementById('style').value;
+            const sizeSelect = document.getElementById('size');
+            sizeSelect.innerHTML = "";
+
+            const sizesToLoad = (category === "شلوار لی" || category === "شلوار پارچه‌ای") ? numericSizes : alphaSizes;
+
+            sizesToLoad.forEach(size => {
+                const option = document.createElement('option');
+                option.value = size;
+                option.textContent = size;
+                if (size === "XL" || size === "32") option.selected = true;
+                sizeSelect.appendChild(option);
+            });
+        }
+
+        // بارگذاری اولیه سایزها
+        updateSizes();
 
         // کلید اختصاصی API شما
         const API_KEY = "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"; 
