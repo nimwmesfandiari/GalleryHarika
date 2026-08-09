@@ -433,8 +433,13 @@
     <script src="products.js"></script>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.ready();
+            tg.expand();
+        }
+
+        const WORKER_URL = "https://harika-api.nimwmesfandiarii.workers.dev";
 
         const alphaSizes = ["S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"];
         const numericSizes = ["31", "32", "33", "34", "36", "38"];
@@ -552,7 +557,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button class="btn-buy" ${!isAvailable ? 'disabled' : ''} onclick="buyProduct(${p.id})">
+                        <button class="btn-buy" ${!isAvailable ? 'disabled' : ''} onclick="buyProduct(${p.id}, this)">
                             ${isAvailable ? 'خرید محصول' : 'اتمام موجودی'}
                         </button>
                     </div>
@@ -561,12 +566,64 @@
             });
         }
 
-        function buyProduct(id) {
+        async function buyProduct(id, btnElement) {
             const product = productsDB.find(p => p.id === id);
-            if (product && product.stock > 0) {
-                product.stock -= 1;
-                tg.showAlert(`خرید شما ثبت شد!\nمحصول: ${product.title}\nموجودی جدید: ${product.stock} عدد`);
-                renderProducts();
+            if (!product || product.stock <= 0) return;
+
+            if (btnElement) {
+                btnElement.disabled = true;
+                btnElement.innerText = "در حال ثبت...";
+            }
+
+            const user = tg?.initDataUnsafe?.user;
+            const userId = user?.id ? String(user.id) : "مهمان";
+            const username = user?.username ? `@${user.username}` : (user?.first_name || "نامشخص");
+
+            try {
+                const response = await fetch(WORKER_URL, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        productId: product.id,
+                        productTitle: product.title,
+                        price: String(product.price),
+                        userId: userId,
+                        username: username
+                    }),
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    product.stock -= 1;
+                    const successMsg = `خرید شما با موفقیت ثبت شد!\nمحصول: ${product.title}\nموجودی جدید: ${product.stock} عدد`;
+                    
+                    if (tg?.showAlert) {
+                        tg.showAlert(successMsg);
+                    } else {
+                        alert(successMsg);
+                    }
+                    
+                    renderProducts();
+                } else {
+                    throw new Error(result.error || "خطا در ثبت سفارش");
+                }
+            } catch (err) {
+                console.error("Error submitting order:", err);
+                const errorMsg = "مشکلی در ثبت سفارش پیش آمد: " + err.message;
+                
+                if (tg?.showAlert) {
+                    tg.showAlert(errorMsg);
+                } else {
+                    alert(errorMsg);
+                }
+            } finally {
+                if (btnElement && product.stock > 0) {
+                    btnElement.disabled = false;
+                    btnElement.innerText = "خرید محصول";
+                }
             }
         }
     </script>
