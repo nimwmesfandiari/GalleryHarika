@@ -78,6 +78,20 @@
         </select>
     </div>
 
+    <div class="form-group">
+        <label for="size">سایز لباس:</label>
+        <select id="size">
+            <option value="S">S (کوچک)</option>
+            <option value="M">M (متوسط)</option>
+            <option value="L">L (بزرگ)</option>
+            <option value="XL" selected>XL (خیلی بزرگ)</option>
+            <option value="2XL">2XL</option>
+            <option value="3XL">3XL</option>
+            <option value="4XL">4XL</option>
+            <option value="5XL">5XL</option>
+        </select>
+    </div>
+
     <button id="submitBtn" onclick="findClothes()">پیشنهاد هوشمند با AI</button>
 
     <div id="results"></div>
@@ -93,6 +107,7 @@
         async function findClothes() {
             const budget = document.getElementById('budget').value;
             const category = document.getElementById('style').value;
+            const size = document.getElementById('size').value;
             const resultsDiv = document.getElementById('results');
             const submitBtn = document.getElementById('submitBtn');
 
@@ -105,12 +120,13 @@
             resultsDiv.innerHTML = "<p style='text-align:center;'>⏳ در حال تحلیل و پیشنهاد بهترین گزینه با AI...</p>";
 
             const prompt = `تو یک مشاور فروش حرفه‌ای در فروشگاه پوشاک مردانه "هاریکا" هستی. 
-            کاربر قصد خرید در دسته "${category}" با حداکثر بودجه ${budget} تومان دارد.
+            کاربر قصد خرید در دسته "${category}" با سایز "${size}" و حداکثر بودجه ${budget} تومان دارد.
             قوانین مهم:
             ۱. تمام قیمت‌ها حتماً به تومان و متناسب با بودجه ${budget} تومان باشد.
-            ۲. اگر دسته انتخاب‌شده "ست" است، ۲ یا ۳ آیتم پیشنهادی برای ساخت یک ست شیک معرفی کن. در غیر این صورت، مدل‌های مختلف و پیشنهادی از دسته "${category}" را مشخص کن.
-            ۳. برای هر آیتم پیشنهادی، نام مدل/استایل، قیمت حدودی به تومان و علت پیشنهاد را بنویس.
-            ۴. مجموع قیمت نباید از ${budget} تومان فراتر برود.
+            ۲. حتماً در پاسخ قید کن که مدل‌های پیشنهادی برای سایز ${size} مناسب و موجود هستند.
+            ۳. اگر دسته انتخاب‌شده "ست" است، ۲ یا ۳ آیتم پیشنهادی برای ساخت یک ست شیک معرفی کن. در غیر این صورت، مدل‌های مختلف و پیشنهادی از دسته "${category}" را مشخص کن.
+            ۴. برای هر آیتم پیشنهادی، نام مدل/استایل، قیمت حدودی به تومان و علت پیشنهاد را بنویس.
+            ۵. مجموع قیمت نباید از ${budget} تومان فراتر برود.
             پاسخ را بسیار شیک، جذاب و به زبان فارسی مرتب بنویس.`;
 
             try {
