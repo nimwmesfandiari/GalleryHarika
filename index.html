@@ -322,6 +322,52 @@
             border: none;
         }
 
+        /* استایل‌های باکس موفقیت سفارش */
+        .success-box {
+            text-align: center;
+            padding: 10px 0;
+        }
+        .success-icon {
+            width: 64px;
+            height: 64px;
+            background: #10b981;
+            color: #fff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 16px auto;
+            box-shadow: 0 10px 20px rgba(16, 185, 129, 0.3);
+        }
+        .success-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-color);
+        }
+        .tracking-box {
+            background: rgba(2, 132, 199, 0.1);
+            border: 1px dashed var(--price-color);
+            border-radius: 12px;
+            padding: 12px;
+            margin: 15px 0;
+        }
+        .tracking-code {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--price-color);
+            letter-spacing: 1px;
+            margin-top: 4px;
+            direction: ltr;
+        }
+        .success-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
         /* داک ارتباطی شناور */
         .glass-dock {
             position: fixed;
@@ -390,9 +436,9 @@
         <img class="modal-content" id="modalImage">
     </div>
 
-    <!-- فرم شیشه‌ای دریافت مشخصات خریدار -->
+    <!-- فرم شیشه‌ای دریافت مشخصات خریدار / نمایش کد پیگیری -->
     <div id="orderModal" class="modal">
-        <div class="order-modal-box">
+        <div class="order-modal-box" id="orderModalBox">
             <div class="order-modal-header">
                 <h3>تکمیل اطلاعات سفارش</h3>
                 <button type="button" class="close-btn" onclick="closeOrderModal()">&times;</button>
@@ -409,6 +455,10 @@
                 <div class="form-group">
                     <label>ایمیل (اختیاری):</label>
                     <input type="email" id="email" placeholder="example@gmail.com">
+                </div>
+                <div class="form-group">
+                    <label class="required">کد پستی (۱۰ رقمی):</label>
+                    <input type="text" id="postalCode" required pattern="[0-9]{10}" maxlength="10" placeholder="مثال: 1234567890">
                 </div>
                 <div class="form-group">
                     <label class="required">آدرس کامل پستی:</label>
@@ -570,17 +620,56 @@
             });
         }
 
+        function resetOrderModal() {
+            const modalBox = document.getElementById('orderModalBox');
+            modalBox.innerHTML = `
+                <div class="order-modal-header">
+                    <h3>تکمیل اطلاعات سفارش</h3>
+                    <button type="button" class="close-btn" onclick="closeOrderModal()">&times;</button>
+                </div>
+                <form id="orderForm" onsubmit="submitOrderForm(event)">
+                    <div class="form-group">
+                        <label class="required">نام و نام خانوادگی:</label>
+                        <input type="text" id="fullName" required placeholder="مثال: علی محمدی">
+                    </div>
+                    <div class="form-group">
+                        <label class="required">شماره تلفن:</label>
+                        <input type="tel" id="phoneNumber" required pattern="09[0-9]{9}" placeholder="مثال: 09123456789">
+                    </div>
+                    <div class="form-group">
+                        <label>ایمیل (اختیاری):</label>
+                        <input type="email" id="email" placeholder="example@gmail.com">
+                    </div>
+                    <div class="form-group">
+                        <label class="required">کد پستی (۱۰ رقمی):</label>
+                        <input type="text" id="postalCode" required pattern="[0-9]{10}" maxlength="10" placeholder="مثال: 1234567890">
+                    </div>
+                    <div class="form-group">
+                        <label class="required">آدرس کامل پستی:</label>
+                        <textarea id="address" rows="3" required placeholder="استان، شهر، خیابان اصلی، کوچه، پلاک، واحد"></textarea>
+                    </div>
+                    <button type="submit" id="submitBtn" class="btn-submit">تأیید و ثبت نهایی سفارش</button>
+                </form>
+            `;
+        }
+
         function openOrderModal(productId) {
             const product = productsDB.find(p => p.id === productId);
             if (!product || product.stock <= 0) return;
 
             selectedProductForOrder = product;
+            resetOrderModal();
             document.getElementById('orderModal').style.display = 'flex';
         }
 
         function closeOrderModal() {
             document.getElementById('orderModal').style.display = 'none';
             selectedProductForOrder = null;
+        }
+
+        function generateTrackingCode() {
+            const randomNum = Math.floor(100000 + Math.random() * 900000);
+            return `HARIKA-${randomNum}`;
         }
 
         async function submitOrderForm(event) {
@@ -594,13 +683,17 @@
             const fullName = document.getElementById('fullName').value.trim();
             const phoneNumber = document.getElementById('phoneNumber').value.trim();
             const email = document.getElementById('email').value.trim();
+            const postalCode = document.getElementById('postalCode').value.trim();
             const address = document.getElementById('address').value.trim();
+
+            const trackingCode = generateTrackingCode();
 
             const user = tg?.initDataUnsafe?.user;
             const userId = user?.id ? String(user.id) : "WebUser";
             const username = user?.username ? `@${user.username}` : (user?.first_name || "کاربر وب");
 
             const orderData = {
+                trackingCode: trackingCode,
                 productId: selectedProductForOrder.id,
                 productTitle: selectedProductForOrder.title,
                 price: String(selectedProductForOrder.price),
@@ -609,6 +702,7 @@
                 fullName: fullName,
                 phoneNumber: phoneNumber,
                 email: email,
+                postalCode: postalCode,
                 address: address
             };
 
@@ -623,16 +717,25 @@
 
                 if (result.success) {
                     selectedProductForOrder.stock -= 1;
-                    const alertMsg = "سفارش شما با موفقیت ثبت شد!\nبه زودی جهت هماهنگی با شما تماس گرفته خواهد شد.";
                     
-                    if (tg?.showAlert) {
-                        tg.showAlert(alertMsg);
-                    } else {
-                        alert(alertMsg);
-                    }
+                    // تغییر محتوای باکس شیشه‌ای به پیام موفقیت
+                    const modalBox = document.getElementById('orderModalBox');
+                    modalBox.innerHTML = `
+                        <div class="success-box">
+                            <div class="success-icon">✓</div>
+                            <div class="success-title">سفارش با موفقیت ثبت شد 🎉</div>
+                            <div class="tracking-box">
+                                <span style="font-size:12px; color:var(--text-muted);">کد پیگیری شما:</span>
+                                <div class="tracking-code">${trackingCode}</div>
+                            </div>
+                            <div class="success-desc">
+                                اطلاعات سفارش شما با موفقیت در سیستم فروشگاه ثبت شد.<br>
+                                لطفاً این کد پیگیری را نزد خود برای پیگیری‌های بعدی نگه دارید.
+                            </div>
+                            <button class="btn-submit" onclick="closeOrderModal()">بازگشت به فروشگاه</button>
+                        </div>
+                    `;
 
-                    document.getElementById('orderForm').reset();
-                    closeOrderModal();
                     renderProducts();
                 } else {
                     throw new Error(result.error || "خطا در ثبت سفارش");
@@ -646,7 +749,6 @@
                 } else {
                     alert(errorMsg);
                 }
-            } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerText = "تأیید و ثبت نهایی سفارش";
             }
