@@ -6,38 +6,36 @@
     <title>فروشگاه پوشاک هاریکا</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* تعریف رنگ‌ها برای حالت روز (پیش‌فرض) */
         :root {
             --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             --text-color: #0f172a;
             --text-muted: #475569;
-            --glass-bg: rgba(255, 255, 255, 0.55);
+            --glass-bg: rgba(255, 255, 255, 0.75);
             --glass-border: rgba(255, 255, 255, 0.8);
             --glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-            --select-bg: rgba(255, 255, 255, 0.65);
+            --select-bg: rgba(255, 255, 255, 0.85);
             --option-bg: #ffffff;
             --option-text: #0f172a;
-            --card-back-bg: rgba(255, 255, 255, 0.9);
-            --modal-bg: rgba(255, 255, 255, 0.8);
-            --dock-bg: rgba(255, 255, 255, 0.6);
+            --card-back-bg: rgba(255, 255, 255, 0.95);
+            --modal-bg: rgba(255, 255, 255, 0.85);
+            --dock-bg: rgba(255, 255, 255, 0.8);
             --price-color: #0284c7;
         }
 
-        /* سوئیچ خودکار به حالت شب (در صورت فعال بودن Dark Mode گوشی) */
         @media (prefers-color-scheme: dark) {
             :root {
                 --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
                 --text-color: #ffffff;
                 --text-muted: rgba(255, 255, 255, 0.7);
-                --glass-bg: rgba(255, 255, 255, 0.07);
-                --glass-border: rgba(255, 255, 255, 0.15);
+                --glass-bg: rgba(255, 255, 255, 0.1);
+                --glass-border: rgba(255, 255, 255, 0.2);
                 --glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-                --select-bg: rgba(255, 255, 255, 0.1);
+                --select-bg: rgba(255, 255, 255, 0.15);
                 --option-bg: #1e1b4b;
                 --option-text: #ffffff;
-                --card-back-bg: rgba(15, 23, 42, 0.9);
-                --modal-bg: rgba(0, 0, 0, 0.75);
-                --dock-bg: rgba(255, 255, 255, 0.12);
+                --card-back-bg: rgba(15, 23, 42, 0.95);
+                --modal-bg: rgba(30, 27, 75, 0.9);
+                --dock-bg: rgba(255, 255, 255, 0.15);
                 --price-color: #38bdf8;
             }
         }
@@ -56,7 +54,6 @@
             padding: 20px;
             padding-bottom: 100px;
             min-height: 100vh;
-            transition: background 0.3s ease, color 0.3s ease;
         }
 
         /* هدر شیشه‌ای */
@@ -83,7 +80,6 @@
             margin: 12px 0 0 0;
             font-size: 20px;
             font-weight: 700;
-            letter-spacing: -0.5px;
             color: var(--text-color);
         }
 
@@ -96,11 +92,13 @@
             font-weight: 600;
             font-size: 13px;
             color: var(--text-muted);
-            padding-right: 4px;
+        }
+        .required::after {
+            content: " *";
+            color: #ef4444;
         }
 
-        /* منوهای کشویی شیشه‌ای iOS */
-        select {
+        select, input, textarea {
             width: 100%;
             padding: 12px 16px;
             border: 1px solid var(--glass-border);
@@ -111,11 +109,9 @@
             -webkit-backdrop-filter: blur(15px);
             color: var(--text-color);
             outline: none;
-            transition: all 0.3s ease;
             box-shadow: var(--glass-shadow);
-            cursor: pointer;
         }
-        select:focus {
+        select:focus, input:focus, textarea:focus {
             border-color: var(--price-color);
         }
         select option {
@@ -130,7 +126,7 @@
             margin-top: 25px;
         }
 
-        /* کارت چرخشی شیشه‌ای */
+        /* کارت چرخشی */
         .flip-card {
             background-color: transparent;
             width: 100%;
@@ -182,9 +178,8 @@
             position: absolute;
             bottom: 8px;
             left: 8px;
-            background: rgba(0, 0, 0, 0.4);
+            background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
             color: #fff;
             width: 32px;
             height: 32px;
@@ -194,10 +189,6 @@
             justify-content: center;
             font-size: 13px;
             border: 1px solid rgba(255,255,255,0.3);
-            transition: all 0.2s;
-        }
-        .zoom-btn:active {
-            transform: scale(0.9);
         }
 
         .flip-card-back {
@@ -222,7 +213,6 @@
             height: 13px;
             border-radius: 50%;
             border: 1px solid rgba(0, 0, 0, 0.15);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .product-title { 
@@ -250,20 +240,16 @@
         .in-stock { 
             background: rgba(16, 185, 129, 0.15); 
             color: #10b981; 
-            border: 1px solid rgba(16, 185, 129, 0.3);
         }
         .out-stock { 
             background: rgba(239, 68, 68, 0.15); 
             color: #ef4444; 
-            border: 1px solid rgba(239, 68, 68, 0.3);
         }
 
-        /* دکمه خرید */
-        .btn-buy {
+        .btn-buy, .btn-submit {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             background: linear-gradient(135deg, #0284c7, #2563eb);
-            backdrop-filter: blur(10px);
             color: #fff;
             border: none;
             border-radius: 14px;
@@ -272,19 +258,15 @@
             margin-top: 8px;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(2, 132, 199, 0.3);
-            transition: all 0.2s ease;
         }
-        .btn-buy:active {
-            transform: scale(0.96);
-        }
-        .btn-buy:disabled { 
-            background: rgba(148, 163, 184, 0.3); 
-            color: rgba(148, 163, 184, 0.7);
+        .btn-buy:disabled, .btn-submit:disabled { 
+            background: rgba(148, 163, 184, 0.4); 
+            color: rgba(255, 255, 255, 0.6);
             box-shadow: none;
             cursor: not-allowed; 
         }
 
-        /* مدال بزرگ‌نمایی تصویر */
+        /* پنجره‌های مدال */
         .modal {
             display: none;
             position: fixed;
@@ -293,9 +275,9 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background: var(--modal-bg);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             justify-content: center;
             align-items: center;
             padding: 20px;
@@ -304,21 +286,43 @@
             max-width: 90%;
             max-height: 80%;
             border-radius: 20px;
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
             object-fit: contain;
         }
-        .close-modal {
-            position: absolute;
-            top: 20px;
-            right: 25px;
+
+        /* مدال شیشه‌ای ثبت سفارش */
+        .order-modal-box {
+            background: var(--modal-bg);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 24px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+        .order-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+        .order-modal-header h3 {
+            margin: 0;
+            font-size: 16px;
             color: var(--text-color);
-            font-size: 35px;
+        }
+        .close-btn {
+            color: var(--text-color);
+            font-size: 24px;
             font-weight: bold;
             cursor: pointer;
+            background: none;
+            border: none;
         }
 
-        /* باکس شیشه‌ای شناور (iOS Glass Floating Dock) */
+        /* داک ارتباطی شناور */
         .glass-dock {
             position: fixed;
             bottom: 20px;
@@ -328,8 +332,8 @@
             max-width: 320px;
             height: 56px;
             background: var(--dock-bg);
-            backdrop-filter: blur(25px) saturate(180%);
-            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
             border-radius: 30px;
             border: 1px solid var(--glass-border);
             box-shadow: var(--glass-shadow);
@@ -339,22 +343,6 @@
             padding: 0 15px;
             z-index: 999;
         }
-
-        .dock-item {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            text-decoration: none;
-            transition: transform 0.2s ease;
-        }
-
-        .dock-item:active {
-            transform: scale(0.85);
-        }
-
         .dock-item svg {
             width: 24px;
             height: 24px;
@@ -397,49 +385,65 @@
 
     <div id="productsContainer" class="products-grid"></div>
 
-    <!-- پنجره بزرگ‌نمایی عکس -->
+    <!-- بزرگ‌نمایی تصویر -->
     <div id="imageModal" class="modal" onclick="closeImageModal()">
-        <span class="close-modal">&times;</span>
         <img class="modal-content" id="modalImage">
     </div>
 
-    <!-- باکس شیشه‌ای ارتباطی شناور پایین صفحه -->
+    <!-- فرم شیشه‌ای دریافت مشخصات خریدار -->
+    <div id="orderModal" class="modal">
+        <div class="order-modal-box">
+            <div class="order-modal-header">
+                <h3>تکمیل اطلاعات سفارش</h3>
+                <button type="button" class="close-btn" onclick="closeOrderModal()">&times;</button>
+            </div>
+            <form id="orderForm" onsubmit="submitOrderForm(event)">
+                <div class="form-group">
+                    <label class="required">نام و نام خانوادگی:</label>
+                    <input type="text" id="fullName" required placeholder="مثال: علی محمدی">
+                </div>
+                <div class="form-group">
+                    <label class="required">شماره تلفن:</label>
+                    <input type="tel" id="phoneNumber" required pattern="09[0-9]{9}" placeholder="مثال: 09123456789">
+                </div>
+                <div class="form-group">
+                    <label>ایمیل (اختیاری):</label>
+                    <input type="email" id="email" placeholder="example@gmail.com">
+                </div>
+                <div class="form-group">
+                    <label class="required">آدرس کامل پستی:</label>
+                    <textarea id="address" rows="3" required placeholder="استان، شهر، خیابان اصلی، کوچه، پلاک، واحد"></textarea>
+                </div>
+                <button type="submit" id="submitBtn" class="btn-submit">تأیید و ثبت نهایی سفارش</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- dack شناور ارتباطی -->
     <div class="glass-dock">
-        <!-- اینستاگرام -->
-        <a href="https://instagram.com/gallery_harika_ard" target="_blank" class="dock-item" title="اینستاگرام">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#e1306c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-            </svg>
+        <a href="https://instagram.com/gallery_harika_ard" target="_blank" class="dock-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#e1306c" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
         </a>
-
-        <!-- واتساپ -->
-        <a href="https://wa.me/989144510449" target="_blank" class="dock-item" title="واتساپ">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#25d366" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
-            </svg>
+        <a href="https://wa.me/989144510449" target="_blank" class="dock-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#25d366" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
         </a>
-
-        <!-- تماس تلفنی -->
-        <a href="tel:04533250571" class="dock-item" title="تماس بگیرید">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-            </svg>
+        <a href="tel:04533250571" class="dock-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
         </a>
     </div>
 
-    <!-- متصل کردن دیتابیس محصولات -->
     <script src="products.js"></script>
 
     <script>
+        const WORKER_URL = "https://harika-api.nimwmesfandiarii.workers.dev";
         const tg = window.Telegram?.WebApp;
-        if (tg) {
+        
+        if (tg && tg.initData) {
             tg.ready();
             tg.expand();
         }
 
-        const WORKER_URL = "https://harika-api.nimwmesfandiarii.workers.dev";
+        let selectedProductForOrder = null;
 
         const alphaSizes = ["S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"];
         const numericSizes = ["31", "32", "33", "34", "36", "38"];
@@ -557,8 +561,8 @@
                                 </div>
                             </div>
                         </div>
-                        <button class="btn-buy" ${!isAvailable ? 'disabled' : ''} onclick="buyProduct(${p.id}, this)">
-                            ${isAvailable ? 'خرید محصول' : 'اتمام موجودی'}
+                        <button class="btn-buy" ${!isAvailable ? 'disabled' : ''} onclick="openOrderModal(${p.id})">
+                            ${isAvailable ? 'ثبت سفارش' : 'اتمام موجودی'}
                         </button>
                     </div>
                 `;
@@ -566,46 +570,69 @@
             });
         }
 
-        async function buyProduct(id, btnElement) {
-            const product = productsDB.find(p => p.id === id);
+        function openOrderModal(productId) {
+            const product = productsDB.find(p => p.id === productId);
             if (!product || product.stock <= 0) return;
 
-            if (btnElement) {
-                btnElement.disabled = true;
-                btnElement.innerText = "در حال ثبت...";
-            }
+            selectedProductForOrder = product;
+            document.getElementById('orderModal').style.display = 'flex';
+        }
+
+        function closeOrderModal() {
+            document.getElementById('orderModal').style.display = 'none';
+            selectedProductForOrder = null;
+        }
+
+        async function submitOrderForm(event) {
+            event.preventDefault();
+            if (!selectedProductForOrder) return;
+
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "در حال ثبت سفارش...";
+
+            const fullName = document.getElementById('fullName').value.trim();
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const address = document.getElementById('address').value.trim();
 
             const user = tg?.initDataUnsafe?.user;
-            const userId = user?.id ? String(user.id) : "مهمان";
-            const username = user?.username ? `@${user.username}` : (user?.first_name || "نامشخص");
+            const userId = user?.id ? String(user.id) : "WebUser";
+            const username = user?.username ? `@${user.username}` : (user?.first_name || "کاربر وب");
+
+            const orderData = {
+                productId: selectedProductForOrder.id,
+                productTitle: selectedProductForOrder.title,
+                price: String(selectedProductForOrder.price),
+                userId: userId,
+                username: username,
+                fullName: fullName,
+                phoneNumber: phoneNumber,
+                email: email,
+                address: address
+            };
 
             try {
                 const response = await fetch(WORKER_URL, {
                     method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        productId: product.id,
-                        productTitle: product.title,
-                        price: String(product.price),
-                        userId: userId,
-                        username: username
-                    }),
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(orderData)
                 });
 
                 const result = await response.json();
 
                 if (result.success) {
-                    product.stock -= 1;
-                    const successMsg = `خرید شما با موفقیت ثبت شد!\nمحصول: ${product.title}\nموجودی جدید: ${product.stock} عدد`;
+                    selectedProductForOrder.stock -= 1;
+                    const alertMsg = "سفارش شما با موفقیت ثبت شد!\nبه زودی جهت هماهنگی با شما تماس گرفته خواهد شد.";
                     
                     if (tg?.showAlert) {
-                        tg.showAlert(successMsg);
+                        tg.showAlert(alertMsg);
                     } else {
-                        alert(successMsg);
+                        alert(alertMsg);
                     }
-                    
+
+                    document.getElementById('orderForm').reset();
+                    closeOrderModal();
                     renderProducts();
                 } else {
                     throw new Error(result.error || "خطا در ثبت سفارش");
@@ -620,10 +647,8 @@
                     alert(errorMsg);
                 }
             } finally {
-                if (btnElement && product.stock > 0) {
-                    btnElement.disabled = false;
-                    btnElement.innerText = "خرید محصول";
-                }
+                submitBtn.disabled = false;
+                submitBtn.innerText = "تأیید و ثبت نهایی سفارش";
             }
         }
     </script>
