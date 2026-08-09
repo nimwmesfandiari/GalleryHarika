@@ -289,7 +289,7 @@
             object-fit: contain;
         }
 
-        /* مدال شیشه‌ای ثبت سفارش */
+        /* مدال شیشه‌ای ثبت و پیگیری سفارش */
         .order-modal-box {
             background: var(--modal-bg);
             backdrop-filter: blur(25px) saturate(180%);
@@ -298,7 +298,9 @@
             border-radius: 24px;
             padding: 24px;
             width: 100%;
-            max-width: 400px;
+            max-width: 440px;
+            max-height: 85vh;
+            overflow-y: auto;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
             position: relative;
         }
@@ -320,6 +322,96 @@
             cursor: pointer;
             background: none;
             border: none;
+        }
+
+        /* تب‌های سفارش‌ها */
+        .orders-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 8px;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 8px 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-color);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .tab-btn.active {
+            background: var(--price-color);
+            color: #fff;
+            border-color: var(--price-color);
+        }
+
+        /* کارت سفارش */
+        .order-card {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 12px;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+        .order-card-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
+        .order-status-badge {
+            padding: 3px 8px;
+            border-radius: 8px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+        .status-registered { background: rgba(2, 132, 199, 0.2); color: #0284c7; }
+        .status-preparing { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        .status-shipped { background: rgba(168, 85, 247, 0.2); color: #a855f7; }
+        .status-delivered { background: rgba(16, 185, 129, 0.2); color: #10b981; }
+        .status-cancelled { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+
+        .btn-cancel-order {
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            cursor: pointer;
+            margin-top: 8px;
+            width: 100%;
+        }
+
+        /* باکس پیگیری سریع */
+        .tracking-section {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--glass-border);
+        }
+        .tracking-input-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .tracking-input-group input {
+            flex: 1;
+        }
+        .btn-track {
+            background: var(--price-color);
+            color: #fff;
+            border: none;
+            padding: 0 16px;
+            border-radius: 16px;
+            font-weight: 700;
+            cursor: pointer;
         }
 
         /* استایل‌های باکس موفقیت سفارش */
@@ -445,36 +537,10 @@
         <img class="modal-content" id="modalImage">
     </div>
 
-    <!-- فرم شیشه‌ای دریافت مشخصات خریدار / نمایش کد پیگیری -->
+    <!-- مدال اصلی ثبت سفارش / مدیریت خریدهای قبلی -->
     <div id="orderModal" class="modal">
         <div class="order-modal-box" id="orderModalBox">
-            <div class="order-modal-header">
-                <h3>تکمیل اطلاعات سفارش</h3>
-                <button type="button" class="close-btn" onclick="closeOrderModal()">&times;</button>
-            </div>
-            <form id="orderForm" onsubmit="submitOrderForm(event)">
-                <div class="form-group">
-                    <label class="required">نام و نام خانوادگی:</label>
-                    <input type="text" id="fullName" required placeholder="مثال: علی محمدی">
-                </div>
-                <div class="form-group">
-                    <label class="required">شماره تلفن:</label>
-                    <input type="tel" id="phoneNumber" required pattern="09[0-9]{9}" placeholder="مثال: 09123456789">
-                </div>
-                <div class="form-group">
-                    <label>ایمیل (اختیاری):</label>
-                    <input type="email" id="email" placeholder="example@gmail.com">
-                </div>
-                <div class="form-group">
-                    <label class="required">کد پستی (۱۰ رقمی):</label>
-                    <input type="text" id="postalCode" required pattern="[0-9]{10}" maxlength="10" placeholder="مثال: 1234567890">
-                </div>
-                <div class="form-group">
-                    <label class="required">آدرس کامل پستی:</label>
-                    <textarea id="address" rows="3" required placeholder="استان، شهر، خیابان اصلی، کوچه، پلاک، واحد"></textarea>
-                </div>
-                <button type="submit" id="submitBtn" class="btn-submit">تأیید و ثبت نهایی سفارش</button>
-            </form>
+            <!-- محتوای داینامیک این مدال از طریق JavaScript بارگذاری می‌شود -->
         </div>
     </div>
 
@@ -486,8 +552,8 @@
         <a href="https://wa.me/989144510449" target="_blank" class="dock-item" title="واتساپ">
             <svg viewBox="0 0 24 24" fill="none" stroke="#25d366" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
         </a>
-        <!-- آیکون سبد خرید / ثبت سفارش -->
-        <button class="dock-item" onclick="triggerCartClick()" title="ثبت سفارش">
+        <!-- آیکون ثبت خرید / پیگیری سفارش‌ها -->
+        <button class="dock-item" onclick="openMyOrdersModal()" title="سفارش‌های من">
             <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
         </button>
         <a href="tel:04533250571" class="dock-item" title="تماس باما">
@@ -507,6 +573,27 @@
         }
 
         let selectedProductForOrder = null;
+        let activeTab = 'registered';
+
+        // ذخیره‌سازی محلی سفارش‌ها
+        function getLocalOrders() {
+            return JSON.parse(localStorage.getItem('harika_orders') || '[]');
+        }
+
+        function saveLocalOrder(order) {
+            const orders = getLocalOrders();
+            orders.unshift(order);
+            localStorage.setItem('harika_orders', JSON.stringify(orders));
+        }
+
+        function updateLocalOrderStatus(trackingCode, newStatus) {
+            const orders = getLocalOrders();
+            const target = orders.find(o => o.trackingCode === trackingCode);
+            if (target) {
+                target.status = newStatus;
+                localStorage.setItem('harika_orders', JSON.stringify(orders));
+            }
+        }
 
         const alphaSizes = ["S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"];
         const numericSizes = ["31", "32", "33", "34", "36", "38"];
@@ -518,6 +605,14 @@
             "شلوار پارچه‌ای": ["شلوار پارچه‌ای اسپرت اندامی", "شلوار پارچه‌ای کلاسیک یا راسته", "شلوار پارچه‌ای مام فیت", "شلوار پارچه‌ای بگ", "شلوار پارچه‌ای کمر انگلیسی"],
             "ست": ["ست اسپرت", "ست تابستانه", "ست پاییزی", "ست هودی و شلوار"],
             "کاپشن": ["کاپشن بادی", "کاپشن چرم", "کاپشن جیر", "پافر"]
+        };
+
+        const statusLabels = {
+            'registered': 'ثبت شده',
+            'preparing': 'در حال آماده‌سازی',
+            'shipped': 'تحویل به پستچی',
+            'delivered': 'تحویل گرفته شده',
+            'cancelled': 'لغو شده'
         };
 
         function updateSubStyles() {
@@ -633,18 +728,105 @@
             });
         }
 
-        function triggerCartClick() {
-            const firstAvailableBtn = document.querySelector('.btn-buy:not([disabled])');
-            if (firstAvailableBtn) {
-                firstAvailableBtn.click();
-            } else {
-                const message = "لطفاً ابتدا محصول مورد نظر خود را از فیلترهای بالا انتخاب کنید.";
-                if (tg?.showAlert) {
-                    tg.showAlert(message);
-                } else {
-                    alert(message);
-                }
+        /* --- سیستم مدیریت حرفه‌ای سفارش‌ها --- */
+        function openMyOrdersModal() {
+            renderMyOrdersView();
+            document.getElementById('orderModal').style.display = 'flex';
+        }
+
+        function switchTab(tabName) {
+            activeTab = tabName;
+            renderMyOrdersView();
+        }
+
+        function cancelOrder(trackingCode) {
+            if (confirm(`آیا از لغو سفارش با کد پیگیری ${trackingCode} اطمینان دارید؟`)) {
+                updateLocalOrderStatus(trackingCode, 'cancelled');
+                renderMyOrdersView();
             }
+        }
+
+        function trackByCode() {
+            const input = document.getElementById('trackInput').value.trim();
+            if (!input) return;
+
+            const orders = getLocalOrders();
+            const found = orders.find(o => o.trackingCode === input);
+
+            const resultDiv = document.getElementById('trackingResult');
+            if (found) {
+                const label = statusLabels[found.status] || found.status;
+                resultDiv.innerHTML = `
+                    <div class="order-card" style="margin-top:10px;">
+                        <div class="order-card-header">
+                            <span>${found.productTitle}</span>
+                            <span class="order-status-badge status-${found.status}">${label}</span>
+                        </div>
+                        <div>کد پیگیری: <b>${found.trackingCode}</b></div>
+                        <div>مبلغ: ${found.price} تومان</div>
+                    </div>
+                `;
+            } else {
+                resultDiv.innerHTML = `<p style="color:#ef4444; font-size:12px; margin-top:10px;">سفارشی با این کد پیگیری یافت نشد.</p>`;
+            }
+        }
+
+        function renderMyOrdersView() {
+            const modalBox = document.getElementById('orderModalBox');
+            const orders = getLocalOrders();
+            const filteredOrders = orders.filter(o => {
+                if (activeTab === 'registered') return o.status === 'registered' || o.status === 'preparing' || o.status === 'shipped';
+                if (activeTab === 'delivered') return o.status === 'delivered';
+                if (activeTab === 'cancelled') return o.status === 'cancelled';
+                return true;
+            });
+
+            let listHTML = '';
+            if (filteredOrders.length === 0) {
+                listHTML = `<p style="text-align:center; color:var(--text-muted); font-size:12px; padding:20px 0;">سفارشی در این بخش وجود ندارد.</p>`;
+            } else {
+                filteredOrders.forEach(o => {
+                    const label = statusLabels[o.status] || o.status;
+                    const canCancel = o.status === 'registered';
+                    listHTML += `
+                        <div class="order-card">
+                            <div class="order-card-header">
+                                <span>${o.productTitle}</span>
+                                <span class="order-status-badge status-${o.status}">${label}</span>
+                            </div>
+                            <div style="color:var(--text-muted);">کد پیگیری: <b style="color:var(--price-color);">${o.trackingCode}</b></div>
+                            <div style="color:var(--text-muted);">مبلغ: ${o.price} تومان</div>
+                            ${canCancel ? `<button class="btn-cancel-order" onclick="cancelOrder('${o.trackingCode}')">لغو سفارش</button>` : ''}
+                        </div>
+                    `;
+                });
+            }
+
+            modalBox.innerHTML = `
+                <div class="order-modal-header">
+                    <h3>مدیریت و پیگیری سفارش‌ها</h3>
+                    <button type="button" class="close-btn" onclick="closeOrderModal()">&times;</button>
+                </div>
+                
+                <div class="orders-tabs">
+                    <button class="tab-btn ${activeTab === 'registered' ? 'active' : ''}" onclick="switchTab('registered')">ثبت‌شده‌ها</button>
+                    <button class="tab-btn ${activeTab === 'delivered' ? 'active' : ''}" onclick="switchTab('delivered')">تحویل‌گرفته‌ها</button>
+                    <button class="tab-btn ${activeTab === 'cancelled' ? 'active' : ''}" onclick="switchTab('cancelled')">لغو‌شده‌ها</button>
+                </div>
+
+                <div class="orders-list-container">
+                    ${listHTML}
+                </div>
+
+                <div class="tracking-section">
+                    <label>پیگیری با کد یکتا / پیگیری:</label>
+                    <div class="tracking-input-group">
+                        <input type="text" id="trackInput" placeholder="مثال: HARIKA-123456">
+                        <button class="btn-track" onclick="trackByCode()">بررسی</button>
+                    </div>
+                    <div id="trackingResult"></div>
+                </div>
+            `;
         }
 
         function resetOrderModal() {
@@ -730,7 +912,8 @@
                 phoneNumber: phoneNumber,
                 email: email,
                 postalCode: postalCode,
-                address: address
+                address: address,
+                status: 'registered'
             };
 
             try {
@@ -745,6 +928,9 @@
                 if (result.success) {
                     selectedProductForOrder.stock -= 1;
                     
+                    // ذخیره در حافظه محلی جهت مشاهده در تب ثبت‌شده‌ها
+                    saveLocalOrder(orderData);
+
                     const modalBox = document.getElementById('orderModalBox');
                     modalBox.innerHTML = `
                         <div class="success-box">
@@ -755,10 +941,10 @@
                                 <div class="tracking-code">${trackingCode}</div>
                             </div>
                             <div class="success-desc">
-                                اطلاعات سفارش شما با موفقیت در سیستم فروشگاه ثبت شد.<br>
-                                لطفاً این کد پیگیری را نزد خود برای پیگیری‌های بعدی نگه دارید.
+                                اطلاعات سفارش شما با موفقیت در سیستم ثبت شد.<br>
+                                می‌توانید از داک پایین بخش «سفارش‌های من» وضعیت آن را پیگیری کنید.
                             </div>
-                            <button class="btn-submit" onclick="closeOrderModal()">بازگشت به فروشگاه</button>
+                            <button class="btn-submit" onclick="openMyOrdersModal()">مشاهده لیست سفارش‌ها</button>
                         </div>
                     `;
 
