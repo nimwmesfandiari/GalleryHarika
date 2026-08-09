@@ -152,51 +152,12 @@
 
     <div id="productsContainer" class="products-grid"></div>
 
+    <!-- متصل کردن دیتابیس محصولات -->
+    <script src="products.js"></script>
+
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-
-        // ---------------------------------------------------------
-        // دیتابیس داخلی محصولات هاریکا (قابلیت کم شدن موجودی)
-        // ---------------------------------------------------------
-        let productsDB = [
-            {
-                id: 1,
-                category: "تیشرت",
-                subStyle: "تیشرت باکسی",
-                size: "XL",
-                title: "تیشرت باکسی هاریکا Oval",
-                price: "680,000",
-                fabric: "100% نخ پنبه سوپر شانه شده (دورس دو نخ بدون کرک)",
-                colors: ["#000000", "#ffffff", "#808080"], // مشکی، سفید، طوسی
-                image: "https://s17.uupload.ir/files/logopng/logo.png",
-                stock: 5
-            },
-            {
-                id: 2,
-                category: "تیشرت",
-                subStyle: "تیشرت باکسی",
-                size: "XL",
-                title: "تیشرت باکسی Minimal",
-                price: "720,000",
-                fabric: "پنبه لاکرا درجه یک با کشسانی بالا",
-                colors: ["#5c4033", "#000000"], // قهوه‌ای، مشکی
-                image: "https://s17.uupload.ir/files/logopng/logo.png",
-                stock: 2
-            },
-            {
-                id: 3,
-                category: "شلوار لی",
-                subStyle: "شلوار مام فیت",
-                size: "32",
-                title: "شلوار لی مام فیت زغال‌سنگی",
-                price: "1,100,000",
-                fabric: "جین ۱۲ اونس سنگ‌شور شده بدون آبرفت",
-                colors: ["#333333", "#1a252f"], // زغال‌سنگی، آبی تیره
-                image: "https://s17.uupload.ir/files/logopng/logo.png",
-                stock: 1
-            }
-        ];
 
         const alphaSizes = ["S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"];
         const numericSizes = ["31", "32", "33", "34", "36", "38"];
@@ -234,12 +195,10 @@
             renderProducts();
         }
 
-        // چرخش کارت با کلیک
         function toggleFlip(cardElement) {
             cardElement.classList.toggle('flipped');
         }
 
-        // نمایش کارت‌های محصولات
         function renderProducts() {
             const category = document.getElementById('style').value;
             const subStyle = document.getElementById('subStyle').value;
@@ -248,7 +207,11 @@
 
             container.innerHTML = "";
 
-            // فیلتر محصولات موجود بر اساس انتخاب کاربر
+            if (typeof productsDB === 'undefined') {
+                container.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color:red;'>خطا در بارگذاری فایل محصولات (products.js)</p>";
+                return;
+            }
+
             const filtered = productsDB.filter(p => 
                 p.category === category && 
                 p.subStyle === subStyle && 
@@ -268,7 +231,6 @@
                     <div class="product-item">
                         <div class="flip-card" onclick="toggleFlip(this)">
                             <div class="flip-card-inner">
-                                <!-- روی کارت -->
                                 <div class="flip-card-front">
                                     <img src="${p.image}" alt="${p.title}">
                                     <div class="product-title">${p.title}</div>
@@ -278,7 +240,6 @@
                                         ${isAvailable ? `موجود (${p.stock} عدد)` : 'ناموجود'}
                                     </span>
                                 </div>
-                                <!-- پشت کارت (نوع پارچه) -->
                                 <div class="flip-card-back">
                                     <h4>جنس پارچه و مشخصات:</h4>
                                     <p style="font-size: 12px; line-height: 1.5;">${p.fabric}</p>
@@ -295,17 +256,15 @@
             });
         }
 
-        // ثبت خرید و کسر از موجودی
         function buyProduct(id) {
             const product = productsDB.find(p => p.id === id);
             if (product && product.stock > 0) {
-                product.stock -= 1; // کسر موجودی
+                product.stock -= 1;
                 tg.showAlert(`خرید شما ثبت شد!\nمحصول: ${product.title}\nموجودی جدید: ${product.stock} عدد`);
-                renderProducts(); // بروزرسانی صفحه
+                renderProducts();
             }
         }
 
-        // اجرای اولیه
         updateFormOptions();
     </script>
 </body>
