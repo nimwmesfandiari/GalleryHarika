@@ -18,7 +18,7 @@
         .header img { width: 90px; height: 90px; border-radius: 50%; object-fit: cover; }
         .form-group { margin-bottom: 12px; }
         label { display: block; margin-bottom: 4px; font-weight: bold; font-size: 13px; }
-        select, input {
+        select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
@@ -29,7 +29,6 @@
             color: var(--tg-theme-text-color, #000000);
         }
         
-        /* استایل شبکه محصولات */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -37,7 +36,6 @@
             margin-top: 20px;
         }
 
-        /* استایل کارت ۳ بعدی چرخشی */
         .flip-card {
             background-color: transparent;
             width: 100%;
@@ -85,7 +83,6 @@
             color: #fff;
         }
 
-        /* رنگ‌بندی */
         .color-dots {
             display: flex;
             justify-content: center;
@@ -128,7 +125,8 @@
 
     <div class="form-group">
         <label for="style">دسته لباس:</label>
-        <select id="style" onchange="updateFormOptions()">
+        <select id="style" onchange="updateSubStyles()">
+            <option value="" disabled selected>انتخاب کنید...</option>
             <option value="تیشرت">تیشرت</option>
             <option value="پیراهن">پیراهن</option>
             <option value="شلوار لی">شلوار لی</option>
@@ -138,15 +136,15 @@
 
     <div class="form-group">
         <label for="subStyle">سبک / مدل:</label>
-        <select id="subStyle" onchange="renderProducts()">
-            <!-- به‌صورت پویا پر می‌شود -->
+        <select id="subStyle" onchange="updateSizes()">
+            <option value="" disabled selected>ابتدا دسته را انتخاب کنید</option>
         </select>
     </div>
 
     <div class="form-group">
         <label for="size">سایز:</label>
         <select id="size" onchange="renderProducts()">
-            <!-- به‌صورت پویا پر می‌شود -->
+            <option value="" disabled selected>ابتدا سبک را انتخاب کنید</option>
         </select>
     </div>
 
@@ -169,12 +167,14 @@
             "شلوار پارچه‌ای": ["شلوار پارچه‌ای اسپرت اندامی", "شلوار پارچه‌ای کلاسیک یا راسته", "شلوار پارچه‌ای مام فیت", "شلوار پارچه‌ای بگ", "شلوار پارچه‌ای کمر انگلیسی"]
         };
 
-        function updateFormOptions() {
+        function updateSubStyles() {
             const category = document.getElementById('style').value;
             const subStyleSelect = document.getElementById('subStyle');
             const sizeSelect = document.getElementById('size');
 
-            subStyleSelect.innerHTML = "";
+            subStyleSelect.innerHTML = '<option value="" disabled selected>انتخاب کنید...</option>';
+            sizeSelect.innerHTML = '<option value="" disabled selected>ابتدا سبک را انتخاب کنید</option>';
+
             (stylesMap[category] || []).forEach(sub => {
                 const option = document.createElement('option');
                 option.value = sub;
@@ -182,17 +182,24 @@
                 subStyleSelect.appendChild(option);
             });
 
-            sizeSelect.innerHTML = "";
+            document.getElementById('productsContainer').innerHTML = "";
+        }
+
+        function updateSizes() {
+            const category = document.getElementById('style').value;
+            const sizeSelect = document.getElementById('size');
+
+            sizeSelect.innerHTML = '<option value="" disabled selected>انتخاب کنید...</option>';
+
             const sizesToLoad = (category === "شلوار لی" || category === "شلوار پارچه‌ای") ? numericSizes : alphaSizes;
             sizesToLoad.forEach(size => {
                 const option = document.createElement('option');
                 option.value = size;
                 option.textContent = size;
-                if (size === "XL" || size === "32") option.selected = true;
                 sizeSelect.appendChild(option);
             });
 
-            renderProducts();
+            document.getElementById('productsContainer').innerHTML = "";
         }
 
         function toggleFlip(cardElement) {
@@ -206,6 +213,8 @@
             const container = document.getElementById('productsContainer');
 
             container.innerHTML = "";
+
+            if (!category || !subStyle || !size) return;
 
             if (typeof productsDB === 'undefined') {
                 container.innerHTML = "<p style='grid-column: 1/-1; text-align:center; color:red;'>خطا در بارگذاری فایل محصولات (products.js)</p>";
@@ -264,8 +273,6 @@
                 renderProducts();
             }
         }
-
-        updateFormOptions();
     </script>
 </body>
 </html>
