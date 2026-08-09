@@ -1,5 +1,6 @@
 // دیتابیس محصولات فروشگاه هاریکا
 const productsDB = [
+    // --- تیشرت‌های باکسی ---
     {
         id: 1,
         category: "تیشرت",
@@ -19,13 +20,39 @@ const productsDB = [
         size: "XL",
         title: "تیشرت باکسی Minimal",
         price: "720,000",
-        fabric: "پنبه لاکرا درجه یک با کشسانی بالا",
+        fabric: "پنبه لاکرا درجه یک با کشسانی بالا و تنخور فوق‌العاده",
         colors: ["#5c4033", "#000000"], // قهوه‌ای، مشکی
         image: "https://s17.uupload.ir/files/logopng/logo.png",
-        stock: 2
+        stock: 3
     },
     {
         id: 3,
+        category: "تیشرت",
+        subStyle: "تیشرت باکسی",
+        size: "L",
+        title: "تیشرت باکسی Streetwear",
+        price: "750,000",
+        fabric: "پنبه ۱۰۰٪ سنگ‌شور شده مقاوم در برابر شست‌وشو",
+        colors: ["#1a252f", "#27ae60"], // سرمه‌ای، سبزی یشمی
+        image: "https://s17.uupload.ir/files/logopng/logo.png",
+        stock: 4
+    },
+    {
+        id: 4,
+        category: "تیشرت",
+        subStyle: "تیشرت باکسی",
+        size: "2XL",
+        title: "تیشرت باکسی Heavy Weight",
+        price: "790,000",
+        fabric: "پارچه گباردین پنبه‌ای سنگین با گراماژ بالا",
+        colors: ["#000000", "#d35400"], // مشکی، آجری
+        image: "https://s17.uupload.ir/files/logopng/logo.png",
+        stock: 2
+    },
+
+    // --- شلوارها ---
+    {
+        id: 5,
         category: "شلوار لی",
         subStyle: "شلوار مام فیت",
         size: "32",
