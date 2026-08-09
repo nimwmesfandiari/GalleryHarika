@@ -68,7 +68,7 @@
 
     <div class="form-group">
         <label for="style">دسته / نوع لباس:</label>
-        <select id="style" onchange="updateSizes()">
+        <select id="style" onchange="updateFormOptions()">
             <option value="تیشرت">تیشرت</option>
             <option value="پیراهن">پیراهن</option>
             <option value="شلوار لی">شلوار لی</option>
@@ -79,9 +79,16 @@
     </div>
 
     <div class="form-group">
+        <label for="subStyle">سبک / مدل:</label>
+        <select id="subStyle">
+            <!-- گزینه‌ها به‌صورت پویا بر اساس دسته انتخاب‌شده تغییر می‌کنند -->
+        </select>
+    </div>
+
+    <div class="form-group">
         <label for="size">سایز لباس:</label>
         <select id="size">
-            <!-- گزینه‌ها به‌صورت پویا توسط اسکریپت مدیریت می‌شوند -->
+            <!-- گزینه‌ها به‌صورت پویا بر اساس دسته انتخاب‌شده تغییر می‌کنند -->
         </select>
     </div>
 
@@ -94,18 +101,39 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // لیست سایزها
+        // داده‌های مربوط به سایزها
         const alphaSizes = ["S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"];
         const numericSizes = ["31", "32", "33", "34", "36", "38"];
 
-        // تغییر پویا گزینه‌های سایز بر اساس دسته لباس
-        function updateSizes() {
+        // داده‌های مربوط به سبک‌ها
+        const stylesMap = {
+            "تیشرت": ["تیشرت ساده", "تیشرت طرح دار", "تیشرت باکسی", "تیشرت قواره دار", "تیشرت اندامی", "تیشرت پولو شرت"],
+            "پیراهن": ["پیراهن ساده", "پیراهن طرح دار", "پیراهن مجلسی", "پیراهن اداری"],
+            "شلوار لی": ["شلوار مام فیت", "شلوار مام استایل", "شلوار نیم بگ", "شلوار بگ", "شلوار فول بگ", "شلوار راسته", "شلوار اسکینی"],
+            "شلوار پارچه‌ای": ["شلوار پارچه‌ای اسپرت اندامی", "شلوار پارچه‌ای کلاسیک یا راسته", "شلوار پارچه‌ای مام فیت", "شلوار پارچه‌ای بگ", "شلوار پارچه‌ای کمر انگلیسی"],
+            "ست": ["ست اسپرت", "ست کژوال", "ست تابستانی"],
+            "کاپشن ژاکت": ["کاپشن اسپرت", "ژاکت پاییزه", "پافر"]
+        };
+
+        // تغییر پویا گزینه‌های سبک و سایز بر اساس دسته لباس
+        function updateFormOptions() {
             const category = document.getElementById('style').value;
+            const subStyleSelect = document.getElementById('subStyle');
             const sizeSelect = document.getElementById('size');
+
+            // به‌روزرسانی سبک‌ها
+            subStyleSelect.innerHTML = "";
+            const currentSubStyles = stylesMap[category] || ["همه مدل‌ها"];
+            currentSubStyles.forEach(sub => {
+                const option = document.createElement('option');
+                option.value = sub;
+                option.textContent = sub;
+                subStyleSelect.appendChild(option);
+            });
+
+            // به‌روزرسانی سایزها
             sizeSelect.innerHTML = "";
-
             const sizesToLoad = (category === "شلوار لی" || category === "شلوار پارچه‌ای") ? numericSizes : alphaSizes;
-
             sizesToLoad.forEach(size => {
                 const option = document.createElement('option');
                 option.value = size;
@@ -115,8 +143,8 @@
             });
         }
 
-        // بارگذاری اولیه سایزها
-        updateSizes();
+        // بارگذاری اولیه فرم
+        updateFormOptions();
 
         // کلید اختصاصی API شما
         const API_KEY = "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"; 
@@ -124,6 +152,7 @@
         async function findClothes() {
             const budget = document.getElementById('budget').value;
             const category = document.getElementById('style').value;
+            const subStyle = document.getElementById('subStyle').value;
             const size = document.getElementById('size').value;
             const resultsDiv = document.getElementById('results');
             const submitBtn = document.getElementById('submitBtn');
@@ -137,12 +166,12 @@
             resultsDiv.innerHTML = "<p style='text-align:center;'>⏳ در حال تحلیل و پیشنهاد بهترین گزینه با AI...</p>";
 
             const prompt = `تو یک مشاور فروش حرفه‌ای در فروشگاه پوشاک مردانه "هاریکا" هستی. 
-            کاربر قصد خرید در دسته "${category}" با سایز "${size}" و حداکثر بودجه ${budget} تومان دارد.
+            کاربر قصد خرید در دسته "${category}"، با سبک/مدل "${subStyle}"، سایز "${size}" و حداکثر بودجه ${budget} تومان دارد.
             قوانین مهم:
             ۱. تمام قیمت‌ها حتماً به تومان و متناسب با بودجه ${budget} تومان باشد.
-            ۲. حتماً در پاسخ قید کن که مدل‌های پیشنهادی برای سایز ${size} مناسب و موجود هستند.
-            ۳. اگر دسته انتخاب‌شده "ست" است، ۲ یا ۳ آیتم پیشنهادی برای ساخت یک ست شیک معرفی کن. در غیر این صورت، مدل‌های مختلف و پیشنهادی از دسته "${category}" را مشخص کن.
-            ۴. برای هر آیتم پیشنهادی، نام مدل/استایل، قیمت حدودی به تومان و علت پیشنهاد را بنویس.
+            ۲. حتماً در پاسخ قید کن که مدل‌های پیشنهادی دقیقا در سبک "${subStyle}" و سایز ${size} موجود هستند.
+            ۳. اگر دسته انتخاب‌شده "ست" است، ۲ یا ۳ آیتم پیشنهادی برای ساخت یک ست شیک معرفی کن. در غیر این صورت، مدل‌های مختلف متناسب با سبک "${subStyle}" را مشخص کن.
+            ۴. برای هر آیتم پیشنهادی، نام دقیق مدل/استایل، قیمت حدودی به تومان و علت پیشنهاد را بنویس.
             ۵. مجموع قیمت نباید از ${budget} تومان فراتر برود.
             پاسخ را بسیار شیک، جذاب و به زبان فارسی مرتب بنویس.`;
 
